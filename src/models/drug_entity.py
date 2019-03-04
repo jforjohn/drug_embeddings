@@ -1,4 +1,4 @@
-class Entity(object):
+class DrugEntity(object):
 
     def __init__(self, *, char_offset, type, text, id=None):
         self.id = id
@@ -10,4 +10,4 @@ class Entity(object):
         return f'{self.char_offset}|{self.text}|{self.type}'
 
     def __repr__(self):
-        return f'<Pair {self.id} {self.char_offset} {self.text} {self.type}>'
+        return f'<DrugEntity {self.id} {self.char_offset} {self.text} {self.type}>'

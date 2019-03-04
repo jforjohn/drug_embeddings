@@ -3,8 +3,8 @@ from xml.dom.minidom import parse
 
 import pandas as pd
 
-from models import Entity
-from models import Pair
+from models import DrugEntity
+from models import DrugPair
 
 
 class Parser(object):
@@ -22,7 +22,7 @@ class Parser(object):
 
                 entities = []
                 for e in s.getElementsByTagName('entity'):
-                    entities.append(Entity(
+                    entities.append(DrugEntity(
                         id=e.attributes['id'].value,
                         char_offset=e.attributes['charOffset'].value,
                         type=e.attributes['type'].value,
@@ -31,7 +31,7 @@ class Parser(object):
 
                 pairs = []
                 for p in s.getElementsByTagName('pair'):
-                    pairs.append(Pair(
+                    pairs.append(DrugPair(
                         id=p.attributes['id'].value,
                         entity_1=p.attributes['e1'].value,
                         entity_2=p.attributes['e2'].value,
