@@ -9,7 +9,7 @@ def tokenize(sentence):
         offset = sentence.find(t, offset)
         tks.append({
             'text': t,
-            'char_offset': f'{offset}-{offset+len(t)-1}'
+            'char_offset': [offset, offset+len(t)-1]
         })
         offset += len(t)
 
