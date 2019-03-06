@@ -3,7 +3,7 @@ class Writer(object):
         self.path = path
 
     def call(self, df, col_names=['drugs', 'pairs']):
-        cols = set(df.columns) & set([*col_names, 'id'])
+        cols = list(set(df.columns) & set([*col_names, 'id']))
         res = ''
 
         for _, row in df[cols].iterrows():
