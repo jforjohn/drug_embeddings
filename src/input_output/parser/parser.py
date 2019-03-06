@@ -3,8 +3,8 @@ from xml.dom.minidom import parse
 
 import pandas as pd
 
-from models import DrugEntity
-from models import DrugPair
+from structs import DrugEntity
+from structs import DrugPair
 
 
 class Parser(object):

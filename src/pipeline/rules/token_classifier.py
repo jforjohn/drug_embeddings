@@ -1,4 +1,4 @@
-from models import DrugEntity
+from structs import DrugEntity
 
 drugs = ['ine', 'ide', 'cin', 'ole', 'one', 'ate', 'rin', 'ium', 'oin',
          'xin', 'vir', 'tin', 'cid', 'lam', 'lol', 'fen', 'hol', 'nol', 'lin', 'pin']
