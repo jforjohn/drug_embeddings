@@ -7,13 +7,13 @@ verify_ssl = true
 jupyter = "jupyter notebook --notebook-dir=./notebooks/ --NotebookApp.ip='0.0.0.0' --port=8888 --NotebookApp.token='' --NotebookApp.password=''"
 
 [dev-packages]
-nltk = "*"
 pylint = "*"
 autopep8 = "*"
 rope="*"
 ipdb = "*"
 
 [packages]
+nltk = "*"
 sklearn = "*"
 pandas = "*"
 jupyter = "*"
