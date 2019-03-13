@@ -1,9 +1,9 @@
 class DrugEntity(object):
 
-    def __init__(self, *, offsets, type, text, id=None):
-        self.id = id
+    def __init__(self, *, offsets, de_type, text, de_id=None):
+        self.id = de_id
         self.offsets = offsets
-        self.type = type
+        self.type = de_type
         self.text = text
 
     def _offset_text(self):

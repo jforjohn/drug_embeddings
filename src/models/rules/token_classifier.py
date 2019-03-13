@@ -10,19 +10,19 @@ def classify_token(token):
     if token['text'].isupper():
         return DrugEntity(
             offsets=[token['char_offset']],
-            type='brand',
+            de_type='brand',
             text=token['text']
         )
     elif any(token['text'].endswith(s) for s in groups):
         return DrugEntity(
             offsets=[token['char_offset']],
-            type='group',
+            de_type='group',
             text=token['text']
         )
     elif any(token['text'].endswith(s) for s in drugs):
         return DrugEntity(
             offsets=[token['char_offset']],
-            type='drug',
+            de_type='drug',
             text=token['text']
         )
     return None

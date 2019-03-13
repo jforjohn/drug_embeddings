@@ -27,19 +27,19 @@ class Parser(object):
                         for offset in e.attributes['charOffset'].value.split(';')
                     ]
                     entities.append(DrugEntity(
-                        id=e.attributes['id'].value,
+                        de_id=e.attributes['id'].value,
                         offsets=offsets,
-                        type=e.attributes['type'].value,
+                        de_type=e.attributes['type'].value,
                         text=e.attributes['text'].value
                     ))
 
                 pairs = []
                 for p in s.getElementsByTagName('pair'):
                     pairs.append(DrugPair(
-                        id=p.attributes['id'].value,
+                        dp_id=p.attributes['id'].value,
                         entity_1=p.attributes['e1'].value,
                         entity_2=p.attributes['e2'].value,
-                        type=p.attributes['type'].value
+                        dp_type=p.attributes['type'].value
                         if 'type' in p.attributes else None,
                     ))
                 sentences.append([sid, text, entities, pairs])
