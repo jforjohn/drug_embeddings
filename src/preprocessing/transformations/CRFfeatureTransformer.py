@@ -8,43 +8,43 @@ class CRFfeatureTransformer(BaseEstimator, TransformerMixin):
       result = []
       # for each token, generate list of features and add it to the result
       for k in range(0, len(tokens)):
-         tokenFeatures = []
-         t = tokens[k]['text']
-         tokenFeatures.extend([tokens[k]['char_offset'][0],
-                              tokens[k]['char_offset'][1]])
 
-         tokenFeatures.append("form="+t)
-         tokenFeatures.append("formlower="+t.lower())
-         tokenFeatures.append("suf3="+t[-3:])
-         tokenFeatures.append("suf4="+t[-4:])
-         if (t.isupper()) : tokenFeatures.append("isUpper")
-         if (t.istitle()) : tokenFeatures.append("isTitle")
-         if (t.isdigit()) : tokenFeatures.append("isDigit")
+         t = tokens[k]['text']
+
+         feature = {}
+         feature["form"] = t
+         feature["formlower"] = t.lower()
+         feature["suf3"] = t[-3:]
+         feature["suf4"] = t[-4:]
+         feature["isUpper"] = t.isupper()
+         feature["isTitle"] = t.istitle()
+         feature["isDigit"] = t.isdigit()
 
          if k>0 :
             tPrev = tokens[k-1]['text']
-            tokenFeatures.append("formPrev="+tPrev)
-            tokenFeatures.append("formlowerPrev="+tPrev.lower())
-            tokenFeatures.append("suf3Prev="+tPrev[-3:])
-            tokenFeatures.append("suf4Prev="+tPrev[-4:])
-            if (t.isupper()) : tokenFeatures.append("isUpperPrev")
-            if (t.istitle()) : tokenFeatures.append("isTitlePrev")
-            if (t.isdigit()) : tokenFeatures.append("isDigitPrev")
+            feature["formPrev"] = tPrev
+            feature["formlowerPrev"] = tPrev.lower()
+            feature["suf3Prev"] = tPrev[-3:]
+            feature["suf4Prev"] = tPrev[-4:]
+            feature["isUpperPrev"] = tPrev.isupper()
+            feature["isTitlePrev"] = tPrev.istitle()
+            feature["isDigitPrev"] = tPrev.isdigit()
          else :
-            tokenFeatures.append("BoS")
+            feature["BoS"] = True
 
          if k<len(tokens)-1 :
             tNext = tokens[k+1]['text']
-            tokenFeatures.append("formNext="+tNext)
-            tokenFeatures.append("formlowerNext="+tNext.lower())
-            tokenFeatures.append("suf3Next="+tNext[-3:])
-            tokenFeatures.append("suf4Next="+tNext[-4:])
-            if (t.isupper()) : tokenFeatures.append("isUpperNext")
-            if (t.istitle()) : tokenFeatures.append("isTitleNext")
-            if (t.isdigit()) : tokenFeatures.append("isDigitNext")
+            feature["formNext"] = tNext
+            feature["formlowerNext"] = tNext.lower()
+            feature["suf3Next"] = tNext[-3:]
+            feature["suf4Next"] = tNext[-4:]
+            feature["isUpperNext"] = tNext.isupper()
+            feature["isTitleNext"] = tNext.istitle()
+            feature["isDigitNext"] = tNext.isdigit()
          else:
-            tokenFeatures.append("EoS")
-      
-         result.append(tokenFeatures)
+            feature["EoS"] = True
+
+
+         result.append(feature)
       
       return result
