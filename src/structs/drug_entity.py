@@ -7,12 +7,17 @@ class DrugEntity(object):
         self.text = text
 
     def _offset_text(self):
+        # for discontinuous entities, we only get the first span
+        # (will not work, but there are few of them)
+        '''
         return ';'.join(
             [
                 '-'.join([str(o) for o in offset])
                 for offset in self.offsets
             ]
         )
+        '''
+        return '-'.join([str(o) for o in self.offsets])
     
     def to_output(self):
         return f'{self._offset_text()}|{self.text}|{self.type}'

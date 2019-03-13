@@ -22,10 +22,12 @@ class Parser(object):
 
                 entities = []
                 for e in s.getElementsByTagName('entity'):
+                    # for discontinuous entities, we only get the first span
+                    # (will not work, but there are few of them)
                     offsets = [
                         [int(index) for index in offset.split('-')]
                         for offset in e.attributes['charOffset'].value.split(';')
-                    ]
+                    ][0]
                     entities.append(DrugEntity(
                         de_id=e.attributes['id'].value,
                         offsets=offsets,
