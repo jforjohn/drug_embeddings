@@ -19,6 +19,7 @@ pandas = "*"
 jupyter = "*"
 ipykernel = "*"
 tornado = "==5.1.1"
+sklearn-crfsuite = "*"
 
 [requires]
 python_version = "3.6.0"
