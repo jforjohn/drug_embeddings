@@ -57,12 +57,14 @@ tk, tk_class, n_words, n_tags, train = preprocess_steps(train_base_folder)
 
 _,_,_,_, test = preprocess_steps(test_base_folder)
 
-test = preprocess_steps(test_base_folder)
-
+X_train = train['tokens_emb'].apply(lambda x: pd.Series(x))
+X_test = test['tokens_emb'].apply(lambda x: pd.Series(x))
 y_train = np.array([to_categorical(i, num_classes=n_tags) for i in train['labels']])
 
-print(train.shape)
+print(X_train.shape)
+print(X_test.shape)
 print(y_train.shape)
+print(train['tokens_emb'].values.shape)
 
 from keras.models import Model, Input, Sequential
 from keras.layers import LSTM, Embedding, Dense, TimeDistributed, Dropout, Bidirectional, Conv1D, Dense, Flatten, MaxPooling1D
@@ -81,7 +83,7 @@ print(model.summary())
 input = Input(shape=(100,))
 model = Embedding(input_dim=n_words + 1, output_dim=20,
                   input_length=config_preprocess['MAX_LEN'], mask_zero=True)(input)  # 20-dim embedding
-model = Bidirectional(LSTM(50))(model)  # variational biLSTM
+model = Bidirectional(LSTM(units=50, return_sequences=True, recurrent_dropout=0.1))(model)  # variational biLSTM
 model = TimeDistributed(Dense(50, activation="relu"))(model)  # a dense layer as suggested by neuralNer
 crf = CRF(n_tags)  # CRF layer
 out = crf(model)  # output
@@ -92,7 +94,7 @@ model.compile(optimizer="rmsprop", loss=crf.loss_function, metrics=[crf.accuracy
 
 model.summary()
 
-history = model.fit(train, y_train, batch_size=32, epochs=5, validation_split=0.1, verbose=1)
+history = model.fit(X_train, y_train, batch_size=32, epochs=5, validation_split=0.1, verbose=1)
 print('keys', history.keys())
 test_pred = model.predict(test, verbose=1)
 
