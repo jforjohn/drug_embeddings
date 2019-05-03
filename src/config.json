@@ -1,0 +1,29 @@
+{"data": {
+  "train_dir": "resources/Train/DrugBank",
+  "test_dir": "resources/Test-NER/DrugBank",
+  "output_dir": "out",
+  "pretrained_emb": "resources/glove"
+  },
+"preprocessing": {
+  "test_size": 0.1,
+  "NB_WORDS": 10000,
+  "MAX_LEN": 100,
+  "GLOVE_DIM": 50
+  },
+"arch": {
+  "VAL_SIZE": 1000,
+  "NB_START_EPOCHS": 20,
+  "BATCH_SIZE": 512,
+  "neurons": 50,
+  "type": "MLP",
+  "drop": 0,
+  "nlayers": 1,
+  "activation": "relu",
+  "impl": 2
+  },
+"training": {
+  "epochs": 16,
+  "optimizer": "adam",
+  "lrate": 0.001
+  }
+}
