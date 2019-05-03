@@ -17,8 +17,8 @@ per = PerceptronTagger(load='false')
 per.train(train_data)
 '''
 
-#download('wordnet')
-#download('averaged_perceptron_tagger')
+download('wordnet')
+download('averaged_perceptron_tagger')
 wnl = WordNetLemmatizer()
 
 def lemmatize(p):
