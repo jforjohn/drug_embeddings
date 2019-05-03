@@ -54,5 +54,5 @@ def labelEncode(label):
     tk.fit_on_texts(labels)
     tk.word_index = {k:v-1 for k,v in tk.word_index.items()}
     text2seq = tk.texts_to_sequences(labels)
-    label_seq = [list(map(lambda x: x-1,label)) for label in text2seq]
-    return tk, label_seq
+    #label_seq = [list(map(lambda x: x-1,label)) for label in text2seq]
+    return tk, text2seq
