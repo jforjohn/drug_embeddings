@@ -13,6 +13,8 @@ from keras.optimizers import RMSprop, Adam
 from keras.callbacks import TensorBoard, ModelCheckpoint
 from models.dl import architecture
 from keras.models import load_model
+from keras.utils import plot_model
+
 from structs import DrugEntity
 
 import tensorflow as tf
@@ -82,6 +84,8 @@ print(y_train.shape)
 print(train['tokens_emb'].shape)
 
 crf, model = architecture(config_arch, n_words, n_tags, max_len, emb_dim)
+plot_model(model, to_file=path(output_dir,'model.png'), show_shapes=True)
+
 
 # Training
 optimizer = config_training['optimizer']
