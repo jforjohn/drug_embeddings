@@ -26,7 +26,7 @@ def architecture(config, n_words, n_tags, max_len, emb_dim):
     crf = CRF(n_tags)  # CRF layer
     out = crf(model)  # output
 
-    model = Model(input, out)
+    model = Model(input_model, out)
 
   print(model.summary())
 
