@@ -7,20 +7,20 @@
 "preprocessing": {
   "test_size": 0.1,
   "NB_WORDS": 10000,
-  "MAX_LEN": 100,
-  "EMB_DIM": 128,
+  "MAX_LEN": 165,
+  "EMB_DIM": 20,
   "pretrained": false
   },
 "arch": {
-  "neurons_rnn": 8,
-  "neurons_dense": 8,
+  "neurons_rnn": 50,
+  "neurons_dense": 50,
   "arch_type": "BLSTM",
-  "rec_drop": 0.5,
+  "rec_drop": 0.1,
   "impl": 2
   },
 "training": {
-  "BATCH_SIZE": 64,
-  "EPOCHS": 42,
+  "BATCH_SIZE": 32,
+  "EPOCHS": 10,
   "optimizer": "rmsprop",
   "lrate": 0.01
   }
