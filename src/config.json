@@ -8,14 +8,14 @@
   "test_size": 0.1,
   "NB_WORDS": 10000,
   "MAX_LEN": 100,
-  "EMB_DIM": 50,
+  "EMB_DIM": 128,
   "pretrained": false
   },
 "arch": {
   "neurons_rnn": 10,
   "neurons_dense": 10,
   "arch_type": "BLSTM",
-  "rec_drop": 0.3,
+  "rec_drop": 0.5,
   "impl": 2
   },
 "training": {
