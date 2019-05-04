@@ -84,7 +84,7 @@ print(y_train.shape)
 print(train['tokens_emb'].shape)
 
 crf, model = architecture(config_arch, n_words, n_tags, max_len, emb_dim)
-plot_model(model, to_file=path(output_dir,'model.png'), show_shapes=True)
+plot_model(model, to_file=path.join(output_dir,'model.png'), show_shapes=True)
 
 
 # Training
@@ -104,7 +104,7 @@ cbacks = []
 tensorboard = TensorBoard(log_dir=output_dir+"/{}".format(time()))
 cbacks.append(tensorboard)
 
-modfile = path(output_dir, 'model.h5')
+modfile = path.join(output_dir, 'model.h5')
 mcheck = ModelCheckpoint(filepath=modfile,
                          monitor='val_loss',
                          verbose=0,
@@ -205,7 +205,7 @@ for tokens, crf_tags in zip(test['tokens'], test['preds']):
     drugs.append(current_drugs)
 
 test['drugs'] = drugs
-out_file = path(output_dir,'task9.2_CRF1_1.txt')
+out_file = path.join(output_dir,'task9.2_CRF1_1.txt')
 tmp = Writer(out_file).call(test, col_names=['drugs'])
 
 from os import system
