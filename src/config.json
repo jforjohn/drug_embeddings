@@ -22,6 +22,6 @@
   "BATCH_SIZE": 64,
   "EPOCHS": 42,
   "optimizer": "rmsprop",
-  "lrate": 0.001
+  "lrate": 0.01
   }
 }
