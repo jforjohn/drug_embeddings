@@ -9,11 +9,19 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-import tensorflow as tf
-tf.reset_default_graph()
+from keras.optimizers import RMSprop, Adam
+from keras.callbacks import TensorBoard, ModelCheckpoint
+from models.dl import architecture
+from keras.models import load_model
+from structs import DrugEntity
 
+import tensorflow as tf
+#tf.reset_default_graph()
+
+from time import time
 import pandas as pd
 import numpy as np
+from os import path
 import keras
 print(keras.__version__)
 
@@ -49,6 +57,12 @@ pd.set_option('display.max_colwidth', 1000)
 config = load_config_file('config', './')
 config_data = config['data']
 config_preprocess = config['preprocessing']
+config_arch = config['arch']
+config_training = config['training']
+
+output_dir = config_data['output_dir']
+max_len = config_preprocess['MAX_LEN']
+emb_dim = config_preprocess['EMB_DIM']
 
 train_base_folder = config_data.get('train_dir')
 test_base_folder = config_data.get('test_dir')
@@ -60,42 +74,55 @@ _,_,_,_, test = preprocess_steps(test_base_folder)
 X_train = train['tokens_emb'].apply(lambda x: pd.Series(x))
 X_test = test['tokens_emb'].apply(lambda x: pd.Series(x))
 y_train = np.array([to_categorical(i, num_classes=n_tags) for i in train['labels']])
+y_test = np.array([to_categorical(i, num_classes=n_tags) for i in test['labels']])
 
 print(X_train.shape)
 print(X_test.shape)
 print(y_train.shape)
-print(train['tokens_emb'].values.shape)
+print(train['tokens_emb'].shape)
 
-from keras.models import Model, Input, Sequential
-from keras.layers import LSTM, Embedding, Dense, TimeDistributed, Dropout, Bidirectional, Conv1D, Dense, Flatten, MaxPooling1D
-from keras_contrib.layers import CRF
-'''
-model = Sequential()
-model.add(Embedding(input_dim=n_words + 1, output_dim=20,
-                  input_length=config_preprocess['MAX_LEN'], mask_zero=False))
-model.add(Conv1D(filters=32, kernel_size=8, activation='relu'))
-model.add(MaxPooling1D(pool_size=2))
-model.add(Flatten())
-model.add(Dense(10, activation='relu'))
-model.add(Dense(1, activation='sigmoid'))
-print(model.summary())
-'''
-input = Input(shape=(100,))
-model = Embedding(input_dim=n_words + 1, output_dim=20,
-                  input_length=config_preprocess['MAX_LEN'], mask_zero=True)(input)  # 20-dim embedding
-model = Bidirectional(LSTM(units=50, return_sequences=True, recurrent_dropout=0.1))(model)  # variational biLSTM
-model = TimeDistributed(Dense(50, activation="relu"))(model)  # a dense layer as suggested by neuralNer
-crf = CRF(n_tags)  # CRF layer
-out = crf(model)  # output
+crf, model = architecture(config_arch, n_words, n_tags, max_len, emb_dim)
 
-model = Model(input, out)
+# Training
+optimizer = config_training['optimizer']
 
-model.compile(optimizer="rmsprop", loss=crf.loss_function, metrics=[crf.accuracy])
+if optimizer == 'rmsprop':
+    if 'lrate' in config_training:
+        optimizer = RMSprop(lr=config_training['lrate'],
+                    decay=config_training['lrate']//config_training['epochs'])
+    else:
+        optimizer = RMSprop(lr=0.001)
+else:
+    optimizer = Adam(lr=config_training['lrate'],
+                    decay=config_training['lrate']//config_training['epochs'])
 
-model.summary()
+cbacks = []
+tensorboard = TensorBoard(log_dir=output_dir+"/{}".format(time()))
+cbacks.append(tensorboard)
 
-history = model.fit(X_train, y_train, batch_size=32, epochs=5, validation_split=0.1, verbose=1)
-print('keys', history.keys())
+modfile = path(output_dir, 'model.h5')
+mcheck = ModelCheckpoint(filepath=modfile,
+                         monitor='val_loss',
+                         verbose=0,
+                         save_best_only=True,
+                         save_weights_only=False,
+                         mode='auto',
+                         period=1)
+cbacks.append(mcheck)
+
+model.compile(optimizer=optimizer, loss=crf.loss_function, metrics=[crf.accuracy])
+
+
+start = time()
+history = model.fit(X_train, y_train, 
+            batch_size=config_training['BATCH_SIZE'],
+            epochs=config_training['EPOCHS'],
+            validation_data=(X_test, y_test),
+            callbacks=cbacks,
+            shuffle=False,
+            verbose=1)
+train_duration = time() - start
+
 test_pred = model.predict(test, verbose=1)
 
 loss = history.history['loss']
@@ -107,8 +134,80 @@ plt.title('model loss')
 plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['train','val'], loc='upper left')
-plt.savefig('loss.png')
+plt.savefig(path.join(output_dir,'loss.png'))
 plt.close()
 
-test_pred = model.predict(test, verbose=1)
-print(test_pred)
+acc = history.history['crf_viterbi_accuracy']
+val_acc = history.history['val_crf_viterbi_accuracy']
+#Acc plot
+plt.plot(acc)
+plt.plot(val_acc)
+plt.title('model acc')
+plt.ylabel('acc')
+plt.xlabel('epoch')
+plt.legend(['train','val'], loc='upper left')
+plt.savefig(path.join(output_dir,'acc.png'))
+plt.close()
+
+model = load_model(modfile)
+
+# Evaluation
+score_trn = model.evaluate(X_train, y_train, batch_size=32, verbose=0)
+score_tst = model.evaluate(X_test, y_test, batch_size=32, verbose=0)
+
+print('score', score_trn, score_tst)
+
+test_pred = model.predict(X_test, verbose=1)
+
+idx2tag = dict(map(reversed, tk_class.word_index.items()))
+
+def pred2label(pred):
+    out = []
+    for pred_i in pred:
+        out_i = []
+        for p in pred_i:
+            p_i = np.argmax(p)
+            out_i.append(idx2tag[p_i])
+        out.append(out_i)
+    return out
+    
+test['pred_labels'] = pred2label(test_pred)
+def keepOnlyTags(row):
+    labels = row[0]
+    crf_tags = row[1]
+    return labels[:len(crf_tags)]
+test['preds'] = test[['pred_labels','crf_tags']].apply(keepOnlyTags, axis=1)
+
+drugs = []
+for tokens, crf_tags in zip(test['tokens'], test['preds']):
+    current_drugs = []
+    current_token = None
+    for token, crf_tag in zip(tokens, crf_tags):
+        if crf_tag == 'o':
+            if current_token is not None:
+                current_drugs.append(current_token)
+                current_token = None
+        else:
+            if current_token == None:
+                current_token = DrugEntity(
+                    offsets=token['char_offset'],
+                    de_type=crf_tag.split('-')[-1],
+                    text=token['text']
+                )
+            else:
+                current_token.offsets = [current_token.offsets[0], token['char_offset'][1]]
+                current_token.text = current_token.text + ' ' + token['text']
+
+    drugs.append(current_drugs)
+
+test['drugs'] = drugs
+out_file = path(output_dir,'task9.2_CRF1_1.txt')
+tmp = Writer(out_file).call(test, col_names=['drugs'])
+
+from os import system
+bank_type = 'NER'
+bank_name = 'DrugBank'
+test_dir = f'../resources/Test-{bank_type}/{bank_name}/'
+results = system(f'java -jar ../bin/evaluateNER.jar {test_dir} {out_file}')
+#!rm {out_folder}*.log *.txt
+print('\n'.join(results[-5:-2]))
