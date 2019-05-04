@@ -9,7 +9,7 @@ def CRF_get_tag(row):
         tag = 'O'
         for parsed_drug in row.parsed_drugs:
             start_d = parsed_drug.offsets[0]
-            end_d = parsed_drug.offsets[0]
+            end_d = parsed_drug.offsets[1]
             if start_f == start_d and end_f <= end_d:
                 tag = "B-" + parsed_drug.type
                 break
