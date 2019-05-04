@@ -20,7 +20,7 @@
   },
 "training": {
   "BATCH_SIZE": 64,
-  "EPOCHS": 16,
+  "EPOCHS": 42,
   "optimizer": "rmsprop",
   "lrate": 0.001
   }
