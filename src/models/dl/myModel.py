@@ -23,9 +23,10 @@ def architecture(config, n_words, n_tags, max_len, emb_dim):
                           return_sequences=True,
                           recurrent_dropout=rec_drop,
                           implementation=impl))(model)  # variational biLSTM
-    model = Dropout(0.4)(model)
-    model = TimeDistributed(Dense(neurons_dense, activation="relu", kernel_constraint=maxnorm(3)))(model)  # a dense layer as suggested by neuralNer
-    model = Dropout(0.2)(model)
+    #model = Dropout(0.4)(model)
+    model = TimeDistributed(Dense(neurons_dense, activation="relu"))(model)  # a dense layer as suggested by neuralNer
+    # kernel_constraint=maxnorm(3)
+    #model = Dropout(0.2)(model)
     crf = CRF(n_tags)  # CRF layer
     out = crf(model)  # output
 
@@ -33,4 +34,4 @@ def architecture(config, n_words, n_tags, max_len, emb_dim):
 
   print(model.summary())
 
-  return crf, model
+  return model
