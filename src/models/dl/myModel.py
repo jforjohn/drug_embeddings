@@ -1,9 +1,10 @@
 from keras.layers import Dense
-from keras.layers import LSTM, GRU
+from keras.layers import LSTM, GRU, Dropout
 from keras.regularizers import L1L2
 from keras.models import Model, Input
 from keras.layers import LSTM, Embedding, Dense, TimeDistributed, Dropout, Bidirectional
 from keras_contrib.layers import CRF
+from keras.constraints import maxnorm
 
 
 def architecture(config, n_words, n_tags, max_len, emb_dim):
@@ -22,7 +23,9 @@ def architecture(config, n_words, n_tags, max_len, emb_dim):
                           return_sequences=True,
                           recurrent_dropout=rec_drop,
                           implementation=impl))(model)  # variational biLSTM
-    model = TimeDistributed(Dense(neurons_dense, activation="relu"))(model)  # a dense layer as suggested by neuralNer
+    model = Dropout(0.4)(model)
+    model = TimeDistributed(Dense(neurons_dense, activation="relu", kernel_constraint=maxnorm(3)))(model)  # a dense layer as suggested by neuralNer
+    model = Dropout(0.2)(model)
     crf = CRF(n_tags)  # CRF layer
     out = crf(model)  # output
 
