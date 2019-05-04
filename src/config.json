@@ -13,7 +13,7 @@
   },
 "arch": {
   "neurons_rnn": 10,
-  "neuron_dense": 10,
+  "neurons_dense": 10,
   "arch_type": "BLSTM",
   "rec_drop": 0,
   "impl": 2
