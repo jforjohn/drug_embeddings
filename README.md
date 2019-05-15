@@ -18,3 +18,6 @@ __|     \ \                    / /     |__
            \     ........     /
             \________________/
 ```
+This project is about training an embedding or use pretrained ones for a Named Entity Recognition task. As an example corpus is used the one from SemEval 2013 task9.
+
+In the repository you need to specify the parameters that you want in the *config.json* file and run the *run.py* file in the src directory to run the experiments.
