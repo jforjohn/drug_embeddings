@@ -66,5 +66,8 @@ def removeSpecialCases(df):
     df.drop(remove_specialrow.index, inplace=True)
     return df
 
-def padList(col, val, config):
-    return pad_sequences(sequences=col, maxlen=config.get('MAX_LEN', 100), padding="post", value=val).tolist()
+def padList(col, val, max_len):
+    return pad_sequences(sequences=col, 
+                         maxlen=max_len,
+                         padding="post",
+                         value=val).tolist()

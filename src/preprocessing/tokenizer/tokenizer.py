@@ -4,9 +4,9 @@ from nltk.corpus import stopwords
 
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
-nltk.download('stopwords')
+#nltk.download('stopwords')
 nltk.download('punkt')
-stop_words = stopwords.words('english')
+#stop_words = stopwords.words('english')
 whitelist_sw = ['no', 'of', 'because', 'to', 'if' 'as', 'about', 'between', 'against', 'after', 'from',  'over', 'again', 'then', 'more', 'most', 'such', 'not', 'so', 'can', 'should', 'couldn', "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
 
 def tokenize(sentence):
