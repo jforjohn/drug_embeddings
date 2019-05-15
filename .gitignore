@@ -3,3 +3,7 @@ __pycache__/
 .ipynb_checkpoints/
 out/*
 !out/.keep
+.tmp*
+results*/
+resources/glove/
+*.pdf
